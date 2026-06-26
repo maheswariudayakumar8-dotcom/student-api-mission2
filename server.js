@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -25,9 +26,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // MongoDB Connection
-mongoose.connect(
-  "mongodb://maheswariudayakumar8_db_user:test1234@ac-pfjcpbj-shard-00-00.uhpsjgi.mongodb.net:27017,ac-pfjcpbj-shard-00-01.uhpsjgi.mongodb.net:27017,ac-pfjcpbj-shard-00-02.uhpsjgi.mongodb.net:27017/?ssl=true&replicaSet=atlas-3vosuz-shard-0&authSource=admin&appName=Cluster0"
-)
+mongoose.connect(process.env.MONGO_URL)
 .then(() => console.log("MongoDB Connected"))
 .catch((err) => console.log("MongoDB error:", err));
 
@@ -77,7 +76,7 @@ app.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id },
-      "mysecretkey",
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
@@ -137,6 +136,6 @@ app.get("/profile", auth, (req, res) => {
 });
 
 // SERVER
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(process.env.PORT, () => {
+  console.log("Server running on port " + process.env.PORT);
 });
